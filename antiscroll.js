@@ -54,7 +54,7 @@
     if (needHScroll && this.x) {
       if (!this.horizontal) this.horizontal = new Scrollbar.Horizontal(this);
       this.inner.css({
-        'height': '+=' + scrollbarSize(),
+        'bottom': '-' + scrollbarSize() + 'px',
         'overflow-x': 'scroll'
       });
     } else if (!needHScroll)  {
@@ -62,13 +62,16 @@
         this.horizontal.destroy();
         this.horizontal = null;
       }
-      this.inner.css('overflow-x', 'hidden');
+      this.inner.css({
+        'bottom': 0,
+        'overflow-x': 'hidden'
+      });
     }
 
     if (needVScroll && this.y) {
       if (!this.vertical) this.vertical = new Scrollbar.Vertical(this);
       this.inner.css({
-        'width': '+=' + scrollbarSize(),
+        'right': '-' + scrollbarSize() + 'px',
         'overflow-y': 'scroll'
       });
     } else if (!needVScroll)  {
@@ -76,7 +79,10 @@
         this.vertical.destroy();
         this.vertical = null;
       }
-      this.inner.css('overflow-y', 'hidden');
+      this.inner.css({
+        'right': 0,
+        'overflow-y': 'hidden'
+      });
     }
   };
 
