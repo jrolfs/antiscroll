@@ -36,12 +36,7 @@
     this.x = false !== this.options.x;
     this.y = false !== this.options.y;
     this.padding = undefined == this.options.padding ? 2 : this.options.padding;
-
     this.inner = this.el.find('.antiscroll-inner');
-    this.inner.css({
-        'width': '+=' + scrollbarSize()
-      , 'height': '+=' + scrollbarSize()
-    });
 
     this.refresh();
   };
@@ -56,18 +51,32 @@
     var needHScroll = this.inner.get(0).scrollWidth > this.el.width()
       , needVScroll = this.inner.get(0).scrollHeight > this.el.height();
 
-    if (!this.horizontal && needHScroll && this.x) {
-      this.horizontal = new Scrollbar.Horizontal(this);
-    } else if (this.horizontal && !needHScroll)  {
-      this.horizontal.destroy();
-      this.horizontal = null
+    if (needHScroll && this.x) {
+      if (!this.horizontal) this.horizontal = new Scrollbar.Horizontal(this);
+      this.inner.css({
+        'height': '+=' + scrollbarSize(),
+        'overflow-x': 'scroll'
+      });
+    } else if (!needHScroll)  {
+      if (this.horizontal) {
+        this.horizontal.destroy();
+        this.horizontal = null;
+      }
+      this.inner.css('overflow-x', 'hidden');
     }
 
-    if (!this.vertical && needVScroll && this.y) {
-      this.vertical = new Scrollbar.Vertical(this);
-    } else if (this.vertical && !needVScroll)  {
-      this.vertical.destroy();
-      this.vertical = null
+    if (needVScroll && this.y) {
+      if (!this.vertical) this.vertical = new Scrollbar.Vertical(this);
+      this.inner.css({
+        'width': '+=' + scrollbarSize(),
+        'overflow-y': 'scroll'
+      });
+    } else if (!needVScroll)  {
+      if (this.vertical) {
+        this.vertical.destroy();
+        this.vertical = null;
+      }
+      this.inner.css('overflow-y', 'hidden');
     }
   };
 
