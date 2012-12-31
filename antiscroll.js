@@ -38,6 +38,8 @@
     this.padding = undefined === this.options.padding ? 2 : this.options.padding;
     this.inner = this.el.find('.antiscroll-inner');
 
+    this.el.mousemove($.proxy(this, 'mousemove'));
+
     this.refresh();
   }
 
@@ -115,6 +117,32 @@
     this.inner.attr('style', '');
     Antiscroll.call(this, this.el, this.options);
     return this;
+  };
+
+  /**
+   * Called upon element mousemove
+   *
+   * @api private
+   */
+
+  Antiscroll.prototype.mousemove = function (ev) {
+    var horizontal = this.horizontal;
+    var vertical = this.vertical;
+
+    if (this.timeout) clearTimeout(this.timeout);
+
+    if (horizontal || vertical) {
+
+      if (horizontal && !horizontal.shown) horizontal.show();
+      if (vertical && !vertical.shown) vertical.show();
+
+      this.timeout = setTimeout($.proxy(function () {
+        this.timeout = null;
+
+        if (horizontal && horizontal.shown && !horizontal.el.is(':hover')) this.horizontal.hide();
+        if (vertical && vertical.shown && !vertical.el.is(':hover')) this.vertical.hide();
+      }, this), 750);
+    }
   };
 
   /**
