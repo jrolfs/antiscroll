@@ -50,41 +50,56 @@
    */
 
   Antiscroll.prototype.refresh = function() {
-    var needHScroll = this.inner.get(0).scrollWidth > this.el.width(),
-        needVScroll = this.inner.get(0).scrollHeight > this.el.height();
+    var width = this.el.width();
+    var height = this.el.height();
+
+    var needHScroll = this.inner.get(0).scrollWidth - 1 > width,
+        needVScroll = this.inner.get(0).scrollHeight - 1 > height;
+
+    var absolute = this.inner.css('position') === 'absolute';
+
+    this.inner.removeAttr('style');
 
     if (needHScroll && this.x) {
       if (!this.horizontal) this.horizontal = new Scrollbar.Horizontal(this);
-      this.inner.css({
-        'bottom': '-' + scrollbarSize() + 'px',
-        'overflow-x': 'scroll'
-      });
+      if (absolute) {
+        this.inner.css('bottom', '-' + scrollbarSize() + 'px');
+      } else {
+        this.inner.height(height + scrollbarSize());
+      }
+      this.inner.css('overflow-x', 'scroll');
     } else if (!needHScroll)  {
       if (this.horizontal) {
         this.horizontal.destroy();
         this.horizontal = null;
       }
-      this.inner.css({
-        'bottom': 0,
-        'overflow-x': 'hidden'
-      });
+      if (absolute) {
+        this.inner.css('bottom', 0);
+      } else {
+        this.inner.height(height);
+      }
+      this.inner.css('overflow-x', 'hidden');
     }
 
     if (needVScroll && this.y) {
       if (!this.vertical) this.vertical = new Scrollbar.Vertical(this);
-      this.inner.css({
-        'right': '-' + scrollbarSize() + 'px',
-        'overflow-y': 'scroll'
-      });
+      if (absolute) {
+        this.inner.css('right', '-' + scrollbarSize() + 'px');
+      } else {
+        this.inner.width(width + scrollbarSize());
+      }
+      this.inner.css('overflow-y', 'scroll');
     } else if (!needVScroll)  {
       if (this.vertical) {
         this.vertical.destroy();
         this.vertical = null;
       }
-      this.inner.css({
-        'right': 0,
-        'overflow-y': 'hidden'
-      });
+      if (absolute) {
+        this.inner.css('right', 0);
+      } else {
+        this.inner.width(width);
+      }
+      this.inner.css('overflow-y', 'hidden');
     }
   };
 
@@ -132,10 +147,6 @@
     if (this.timeout) clearTimeout(this.timeout);
 
     if (horizontal || vertical) {
-
-      if (horizontal && !horizontal.shown) horizontal.show();
-      if (vertical && !vertical.shown) vertical.show();
-
       this.timeout = setTimeout($.proxy(function () {
         this.timeout = null;
 
